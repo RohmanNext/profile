@@ -96,6 +96,20 @@ const CVPage: React.FC = () => {
       // Add Page 1 Image on top of the text
       pdf.addImage(p1Url, "PNG", 0, 0, pageW, pageH, undefined, "FAST");
 
+      // Add interactive clickable links on Page 1
+      const p1Rect = page1Ref.current.getBoundingClientRect();
+      const p1Links = page1Ref.current.querySelectorAll<HTMLAnchorElement>("a[href]");
+      p1Links.forEach((a) => {
+        if (a.href) {
+          const rect = a.getBoundingClientRect();
+          const x = ((rect.left - p1Rect.left) / p1Rect.width) * pageW;
+          const y = ((rect.top - p1Rect.top) / p1Rect.height) * pageH;
+          const w = (rect.width / p1Rect.width) * pageW;
+          const h = (rect.height / p1Rect.height) * pageH;
+          pdf.link(x, y, w, h, { url: a.href });
+        }
+      });
+
       // ─── PAGE 2: ATS Text stream (hidden behind image) ───
       pdf.addPage();
       
@@ -120,6 +134,20 @@ const CVPage: React.FC = () => {
 
       // Add Page 2 Image on top of the text
       pdf.addImage(p2Url, "PNG", 0, 0, pageW, pageH, undefined, "FAST");
+
+      // Add interactive clickable links on Page 2
+      const p2Rect = page2Ref.current.getBoundingClientRect();
+      const p2Links = page2Ref.current.querySelectorAll<HTMLAnchorElement>("a[href]");
+      p2Links.forEach((a) => {
+        if (a.href) {
+          const rect = a.getBoundingClientRect();
+          const x = ((rect.left - p2Rect.left) / p2Rect.width) * pageW;
+          const y = ((rect.top - p2Rect.top) / p2Rect.height) * pageH;
+          const w = (rect.width / p2Rect.width) * pageW;
+          const h = (rect.height / p2Rect.height) * pageH;
+          pdf.link(x, y, w, h, { url: a.href });
+        }
+      });
 
       pdf.save("Muhammad_Rachman_Cv.pdf");
     } catch (error) {
@@ -183,10 +211,13 @@ const CVPage: React.FC = () => {
                       <FaPhone className="text-violet-600/80" size={12} />
                       {HEADER.phone}
                     </span>
-                    <span className="flex items-center gap-2">
+                    <a
+                      href={`mailto:${HEADER.email}`}
+                      className="flex items-center gap-2 hover:text-violet-700 transition-colors"
+                    >
                       <FaEnvelope className="text-violet-600/80" size={12} />
                       {HEADER.email}
-                    </span>
+                    </a>
                   </div>
                 </header>
 
@@ -286,9 +317,14 @@ const CVPage: React.FC = () => {
                           <h3 className="text-xs font-bold text-gray-900">
                             {project.title}
                             {project.demoUrl && (
-                              <span className="text-[10px] text-gray-400 font-normal ml-2">
+                              <a
+                                href={project.demoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-gray-400 hover:text-blue-600 hover:underline font-normal ml-2"
+                              >
                                 {project.demoUrl}
-                              </span>
+                              </a>
                             )}
                           </h3>
                         </div>
